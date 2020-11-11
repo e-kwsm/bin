@@ -1,0 +1,23 @@
+#!/bin/sh
+for d in $@; do
+  (
+    set -x
+    cd $d || return
+    if ! git remote | grep -Fq upstream; then
+      echo 'no upstream' >&2
+      return 1
+    fi
+    if ! git diff --quiet; then
+      echo 'Changes not staged for commit' >&2
+      return 1
+    fi
+    branch=$(git branch | grep -F '*' | cut -c3-)
+    if ! git branch -r | grep -Fq "upstream/$branch" ; then
+      echo "no $branch on upstream" >&2
+      return 1
+    fi
+    git fetch upstream $branch
+    git merge upstream/$branch && git push
+    echo
+  )
+done

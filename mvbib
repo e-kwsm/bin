@@ -1,0 +1,34 @@
+#!/bin/bash
+set -e
+if [ $# -ne 2 ]; then
+  echo "usage: ${0##*/} bib dest" >&2
+  exit 1
+fi
+bib=$1
+dest=$2
+
+if [ ! -f ${bib} ]; then
+  echo "error: ${bib} does not exist" >&2
+  exit 1
+fi
+
+sed -i \
+  -e '/^\s*$/d' \
+  -e 's/\s*$//' \
+  -e 's/,\+$/,/' \
+  ${bib}
+echo >> ${bib}
+
+key="$(< ${bib} sed -e '2,$d' -e 's/^\s*@[a-zA-Z]*{//' -e 's/,\s*$//')"
+
+if [ -d ${dest} ]; then
+  bibbase=${bib##*/}
+  if [ "${bibbase%.bibtex}" != "${bibbase}" ]; then
+    dest=${dest}/${bibbase%.bibtex}.bib
+  elif [ "${bibbase}" = 'RSC_.bib' -o "${bibbase}" = 'science.bib' ]; then
+    dest=${dest}/"${key}".bib
+  fi
+fi
+mv -v ${bib} "${dest}"
+
+echo ${key}
