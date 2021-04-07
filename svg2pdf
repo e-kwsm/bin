@@ -1,0 +1,19 @@
+#!/bin/sh
+set -e
+: ${maxsize:=20000000}
+svg=$1
+pdf=${2:-${svg%.svg*}.pdf}
+
+if [ $# -ne 1 -a $# -ne 2 ]; then
+  echo "usage: [maxsize=${maxsize}] ${0##*/} svg [pdf]" >&2
+  exit 1
+fi
+[ -r ${svg} ]
+if [ $(du -b ${svg} | cut -f1) -gt ${maxsize} ]; then
+  echo "${svg} is large ($(du -h ${svg} | cut -f1))" >&2
+  echo "inkscape may hang; exit" >&2
+  exit 1
+fi
+
+inkscape ${svg} -A ${pdf}
+xdg-open ${pdf} &
