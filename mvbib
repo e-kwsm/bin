@@ -25,10 +25,10 @@ if [ -d ${dest} ]; then
   bibbase=${bib##*/}
   if [ "${bibbase%.bibtex}" != "${bibbase}" ]; then
     dest=${dest}/${bibbase%.bibtex}.bib
-  elif [ "${bibbase}" = 'RSC_.bib' -o "${bibbase}" = 'science.bib' ]; then
+  elif [ "${bibbase}" = 'RSC_.bib' ] || [ "${bibbase}" = 'science.bib' ]; then
     dest=${dest}/"${key}".bib
   fi
 fi
-mv -v ${bib} "${dest}"
+mv -v ${bib} ${dest}
 
 echo ${key}

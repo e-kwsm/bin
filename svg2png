@@ -5,7 +5,7 @@ set -e
 svg=$1
 png=${2:-${svg%.svg*}.png}
 
-if [ $# -ne 1 -a $# -ne 2 ]; then
+if [ $# -ne 1 ] && [ $# -ne 2 ]; then
   echo "usage: [maxsize=${maxsize} dpi=${dpi}] ${0##*/} svg [png]" >&2
   exit 1
 fi
@@ -16,5 +16,5 @@ if [ $(du -b ${svg} | cut -f1) -gt ${maxsize} ]; then
   exit 1
 fi
 
-inkscape ${svg} -d ${dpi} -e ${png} && echo "${png} created" || exit
+inkscape ${svg} -d ${dpi} -e ${png}
 xdg-open ${png} &
