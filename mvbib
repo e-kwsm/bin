@@ -7,8 +7,8 @@ fi
 bib=$1
 dest=$2
 
-if [ ! -f ${bib} ]; then
-  echo "error: ${bib} does not exist" >&2
+if [ ! -f "${bib}" ]; then
+  echo "error: ${bib} is not a file" >&2
   exit 1
 fi
 
@@ -16,19 +16,20 @@ sed -i \
   -e '/^\s*$/d' \
   -e 's/\s*$//' \
   -e 's/,\+$/,/' \
-  ${bib}
-echo >> ${bib}
+  -e 's/^\s*@/@/' \
+  "${bib}"
+echo >> "${bib}"
 
-key="$(< ${bib} sed -e '2,$d' -e 's/^\s*@[a-zA-Z]*{//' -e 's/,\s*$//')"
+key="$(< ${bib} sed -e '2,$d' -e 's/^@[a-zA-Z]\+{\s*//' -e 's/\s*,\s*$//')"
 
-if [ -d ${dest} ]; then
-  bibbase=${bib##*/}
+if [ -d "${dest}" ]; then
+  bibbase="${bib##*/}"
   if [ "${bibbase%.bibtex}" != "${bibbase}" ]; then
-    dest=${dest}/${bibbase%.bibtex}.bib
+    dest="${dest}/${bibbase%.bibtex}.bib"
   elif [ "${bibbase}" = 'RSC_.bib' ] || [ "${bibbase}" = 'science.bib' ]; then
-    dest=${dest}/"${key}".bib
+    dest="${dest}/${key}.bib"
   fi
 fi
-mv -v ${bib} ${dest}
+mv -v "${bib}" "${dest}"
 
-echo ${key}
+echo "${key}"
