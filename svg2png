@@ -16,5 +16,5 @@ if [ $(du -b ${svg} | cut -f1) -gt ${maxsize} ]; then
   exit 1
 fi
 
-inkscape ${svg} -d ${dpi} -e ${png}
+inkscape ${svg} --export-dpi=${dpi} --export-type=png -o ${png}
 xdg-open ${png} &

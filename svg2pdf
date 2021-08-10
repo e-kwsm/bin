@@ -15,5 +15,5 @@ if [ $(du -b ${svg} | cut -f1) -gt ${maxsize} ]; then
   exit 1
 fi
 
-inkscape ${svg} -A ${pdf}
+inkscape ${svg} --export-type=pdf -o ${pdf}
 xdg-open ${pdf} &
