@@ -1,19 +1,43 @@
-#!/bin/sh
-for d in $@; do
-  (
-    set -ex
-    cd $d
-    if ! git remote | grep -Fq upstream; then
-      echo 'no upstream' >&2
-      return 1
+#!/bin/sh -ux
+impl() {
+  set -e
+  cd "$d"
+  git remote | grep -Fq upstream
+
+  tmp=$(mktemp)
+  trap 'rm -f "$tmp"' 0 1 2 15
+  git remote show upstream > "$tmp"
+
+  branch=$(< "$tmp" sed -n -e '/HEAD branch/s/.*: //p')
+  [ -n "$branch" ]
+  if < "$tmp" sed -e '0,/^ *Local refs\? configured for /d' | \
+    grep -q "^ *$branch pushes to $branch (up to date)"; then
+    exit 0
+  fi
+  git fetch upstream "$branch"
+  git status -u no | head -n1 | grep -Fq 'On branch '
+  if [ "$(git branch | sed -e '/^ /d;s/^. //p')" = "$branch" ]; then
+    if ! git merge upstream/"$branch"; then
+      git merge --abort
+      exit 1
     fi
-    if ! git diff --quiet; then
-      echo 'Changes not staged for commit' >&2
-      return 1
+    git push
+  else
+    git diff --quiet
+    git switch "$branch"
+    if ! git merge upstream/"$branch"; then
+      git merge --abort
+      git switch -
+      exit 1
     fi
-    branch=$(git branch | sed -e /'^ '/d -e s/'^. '//)
-    git fetch upstream $branch
-    git merge upstream/$branch && git push
-    echo
-  )
+    if ! git push; then
+      git switch -
+      exit 1
+    fi
+    git switch -
+  fi
+}
+
+for d in "$@"; do
+  (impl "$d")
 done
