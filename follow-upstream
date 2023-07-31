@@ -1,9 +1,13 @@
-#!/bin/sh -ux
-impl() {
-  set -e
-  cd "$d"
-  git remote | grep -Fq upstream
+#!/bin/sh
+set -ux
 
+impl() (
+  set -e
+  cd "$1"
+
+  git diff --quiet
+  git status -u no | head -n1 | grep -Fq 'On branch '
+  git remote | grep -Fq upstream
   tmp=$(mktemp)
   trap 'rm -f "$tmp"' 0 1 2 15
   git remote show upstream > "$tmp"
@@ -15,7 +19,6 @@ impl() {
     exit 0
   fi
   git fetch upstream "$branch"
-  git status -u no | head -n1 | grep -Fq 'On branch '
   if [ "$(git branch | sed -e '/^ /d;s/^. //p')" = "$branch" ]; then
     if ! git merge upstream/"$branch"; then
       git merge --abort
@@ -23,7 +26,6 @@ impl() {
     fi
     git push
   else
-    git diff --quiet
     git switch "$branch"
     if ! git merge upstream/"$branch"; then
       git merge --abort
@@ -36,8 +38,8 @@ impl() {
     fi
     git switch -
   fi
-}
+)
 
-for d in "$@"; do
-  (impl "$d")
+for d; do
+  impl "$d"
 done

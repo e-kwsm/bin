@@ -1,14 +1,14 @@
 #!/bin/bash
 set -e
 if [ $# -ne 2 ]; then
-  echo "usage: ${0##*/} bib dest" >&2
+  >&2 echo "usage: ${0##*/} bib dest"
   exit 1
 fi
 bib=$1
 dest=$2
 
 if [ ! -f "${bib}" ]; then
-  echo "error: ${bib} is not a file" >&2
+  >&2 echo "error: ${bib} is not a file"
   exit 1
 fi
 
@@ -20,7 +20,7 @@ sed -i \
   "${bib}"
 echo >> "${bib}"
 
-key="$(< ${bib} sed -e '2,$d' -e 's/^@[a-zA-Z]\+{\s*//' -e 's/\s*,\s*$//')"
+key="$(< "${bib}" sed -e '2,$d' -e 's/^@[a-zA-Z]\+{\s*//' -e 's/\s*,\s*$//')"
 
 if [ -d "${dest}" ]; then
   bibbase="${bib##*/}"
