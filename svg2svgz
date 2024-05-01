@@ -8,5 +8,5 @@ if [ $# -ne 1 ] && [ $# -ne 2 ]; then
   exit 1
 fi
 
-gzip -c -v ${svg} > ${svgz}
-rm ${svg}
+gzip -c -v "${svg}" > "${svgz}"
+rm "${svg}"

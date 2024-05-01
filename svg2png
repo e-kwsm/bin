@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
-: ${maxsize:=20000000}
-: ${dpi:=600}
+: "${maxsize:=20000000}"
+: "${dpi:=600}"
 svg=$1
 png=${2:-${svg%.svg*}.png}
 
@@ -9,12 +9,12 @@ if [ $# -ne 1 ] && [ $# -ne 2 ]; then
   echo "usage: [maxsize=${maxsize} dpi=${dpi}] ${0##*/} svg [png]" >&2
   exit 1
 fi
-[ -r ${svg} ]
-if [ $(du -b ${svg} | cut -f1) -gt ${maxsize} ]; then
-  echo "${svg} is large ($(du -h ${svg} | cut -f1))" >&2
+[ -r "${svg}" ]
+if [ "$(du -b "${svg}" | cut -f1)" -gt "${maxsize}" ]; then
+  echo "${svg} is large ($(du -h "${svg}" | cut -f1))" >&2
   echo "inkscape may hang; exit" >&2
   exit 1
 fi
 
-inkscape ${svg} --export-dpi=${dpi} --export-type=png -o ${png}
-xdg-open ${png} &
+inkscape "${svg}" --export-dpi="${dpi}" --export-type=png -o "${png}"
+xdg-open "${png}" &
