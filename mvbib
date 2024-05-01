@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -e
 if [ $# -ne 2 ]; then
   >&2 echo "usage: ${0##*/} bib dest"
@@ -12,13 +12,15 @@ if [ ! -f "${bib}" ]; then
   exit 1
 fi
 
-sed -i \
-  -e '/^\s*$/d' \
-  -e 's/\s*$//' \
-  -e 's/,\+$/,/' \
-  -e 's/^\s*@/@/' \
-  "${bib}"
-echo >> "${bib}"
+sed -i -f /dev/stdin "${bib}" << 'EOF'
+/^\s*$/d
+s/\s*$//
+s/,\+$/,/
+s/^\s*@/@/
+/^@/s|https\?://doi\.org/||
+$a\
+
+EOF
 
 key="$(< "${bib}" sed -e '2,$d' -e 's/^@[a-zA-Z]\+{\s*//' -e 's/\s*,\s*$//')"
 
