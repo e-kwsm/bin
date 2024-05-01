@@ -9,7 +9,7 @@ impl() (
   git status -u no | head -n1 | grep -Fq 'On branch '
   git remote | grep -Fq upstream
   tmp=$(mktemp)
-  trap 'rm -f "$tmp"' 0 1 2 15
+  trap 'rm -f "$tmp"' 0
   git remote show upstream > "$tmp"
 
   branch=$(< "$tmp" sed -n -e '/HEAD branch/s/.*: //p')
