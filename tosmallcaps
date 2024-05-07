@@ -1,0 +1,27 @@
+#!/usr/bin/env -S sed -f
+s/a/ᴀ/g
+s/b/ʙ/g
+s/c/ᴄ/g
+s/d/ᴅ/g
+s/e/ᴇ/g
+s/f/ꜰ/g
+s/g/ɢ/g
+s/h/ʜ/g
+s/i/ɪ/g
+s/j/ᴊ/g
+s/k/ᴋ/g
+s/l/ʟ/g
+s/m/ᴍ/g
+s/n/ɴ/g
+s/o/ᴏ/g
+s/p/ᴘ/g
+s/q/ꞯ/g
+s/r/ʀ/g
+s/s/ꜱ/g
+s/t/ᴛ/g
+s/u/ᴜ/g
+s/v/ᴠ/g
+s/w/ᴡ/g
+#s/x/x/g
+s/y/ʏ/g
+s/z/ᴢ/g
