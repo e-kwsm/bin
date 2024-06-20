@@ -20,7 +20,12 @@ s/^\s*@/@/
 /^@/s|https\?://doi\.org/||
 $a\
 
+
 EOF
+
+if grep -q '^\s*doi\s*=' "${bib}"; then
+  sed -i -e '/^\s*url\s*=/d' "${bib}"
+fi
 
 key="$(< "${bib}" sed -e '2,$d' -e 's/^@[a-zA-Z]\+{\s*//' -e 's/\s*,\s*$//')"
 
