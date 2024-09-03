@@ -1,5 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 set -ux
+set -o pipefail
 
 impl() (
   set -e
@@ -14,12 +15,12 @@ impl() (
 
   branch=$(< "$tmp" sed -n -e '/HEAD branch/s/.*: //p')
   [ -n "$branch" ]
-  if < "$tmp" sed -e '0,/^ *Local refs\? configured for /d' | \
+  if < "$tmp" sed -e '0,/^ *Local refs\? configured for /d' |
     grep -q "^ *$branch pushes to $branch (up to date)"; then
     exit 0
   fi
   git fetch upstream "$branch"
-  if [ "$(git branch | sed -e '/^ /d;s/^. //p')" = "$branch" ]; then
+  if [ "$(git branch | sed -e '/^[^*]/d;s/^. //p')" = "$branch" ]; then
     if ! git merge upstream/"$branch"; then
       git merge --abort
       exit 1
