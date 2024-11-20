@@ -1,12 +1,17 @@
 #!/bin/sh
 set -ux
 
+check() {
+  git diff --quiet &&
+  git status -u no | head -n 1 | grep -Fq 'On branch '
+}
+
 impl() (
   set -e
   cd "$1"
 
-  git diff --quiet
-  git status -u no | head -n1 | grep -Fq 'On branch '
+  check
+
   tmp=$(mktemp)
   trap 'rm -f "$tmp"' 0
 
@@ -16,13 +21,24 @@ impl() (
   elif git remote | grep -Fq origin; then
     remote=origin
   fi
-
   [ "$remote" ]
+
   headbranch=$(git remote show "$remote" | sed -n -e '/HEAD branch/s/.*: //p')
+  [ "$headbranch" ]
   git fetch "$remote" "$headbranch"
 
   set +e
-  for b in $(git branch | sed -e 's/^..//'); do
+  git worktree list --porcelain | sed -n -E -e '/^worktree\s+/s///p' |
+  while IFS= read -r wt; do
+    set -e
+    cd "$wt"
+    check
+    if ! git rebase "$remote/$headbranch"; then
+      git rebase --abort
+    fi
+  done
+
+  for b in $(git branch | sed -n -e '/^[^+] /s///p'); do
     (
       trap 'git switch -' 0
       git switch "$b"
