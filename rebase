@@ -27,9 +27,8 @@ impl() (
   set +e
   git worktree list --porcelain | sed -n -E -e '/^worktree\s+/s///p' |
   while IFS= read -r wt; do
-    set -e
-    cd "$wt"
-    check
+    cd "$wt" || continue
+    check || continue
     if ! git rebase "$remote/$headbranch"; then
       git rebase --abort
     fi
