@@ -36,7 +36,7 @@ impl() (
 
   for b in $(git branch | sed -n -e '/^[^+] /s///p'); do
     (
-      trap 'git switch -' 0
+      trap 'git restore .; git switch -' 0
       git switch "$b"
       if ! git rebase "$remote/$headbranch"; then
         git rebase --abort
