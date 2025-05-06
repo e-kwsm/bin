@@ -18,10 +18,10 @@ impl() (
   elif git remote | grep -Fq origin; then
     remote=origin
   fi
-  [ "$remote" ]
+  [ -n "$remote" ]
 
   headbranch=$(git remote show "$remote" | sed -n -e '/HEAD branch/s/.*: //p')
-  [ "$headbranch" ]
+  [ -n "$headbranch" ]
   git fetch "$remote" "$headbranch"
 
   set +e
