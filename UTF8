@@ -1,0 +1,5 @@
+#!/bin/sh
+set -e
+[ $# -gt 0 ] || exit
+echo "$@" |
+xargs -r nvim --clean --headless -c 'bufdo :silent :w ++enc=utf-8' -c qa
